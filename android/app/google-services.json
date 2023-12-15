@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "791093127",
+    "project_id": "kafe-app-8a7ee",
+    "storage_bucket": "kafe-app-8a7ee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:791093127:android:f0b769d52aafedf2d8bd22",
+        "android_client_info": {
+          "package_name": "com.example.kafe_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "791093127-5aun2k9nab6baffrg6th22gt533fltj0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kafe_app",
+            "certificate_hash": "d7d8eadd7bc65965935d0a0a3857e76307778fea"
+          }
+        },
+        {
+          "client_id": "791093127-25mj026kq85e4os1djmhp2hl098gvkte.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDVeUsb3Z3Ge7XKlCWmPIf2t1kKVZgyT4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "791093127-25mj026kq85e4os1djmhp2hl098gvkte.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "791093127-52q6h9jqldoga8ndsokfilos0hjve9ia.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.kafeApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

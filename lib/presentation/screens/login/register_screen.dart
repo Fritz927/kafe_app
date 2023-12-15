@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kafe_app/providers/login_form_provider.dart';
+import 'package:kafe_app/services/auth_service.dart';
 import 'package:kafe_app/ui/input_decorations.dart';
 import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatelessWidget {
-    const RegisterScreen({super.key});
+  const RegisterScreen({super.key});
 
   @override
- 
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -50,7 +50,7 @@ class _LoginForm extends StatefulWidget {
 }
 
 class _LoginFormState extends State<_LoginForm> {
-   bool acepted = true;
+  bool acepted = true;
 
   @override
   Widget build(BuildContext context) {
@@ -103,18 +103,18 @@ class _LoginFormState extends State<_LoginForm> {
                       ? null
                       : 'La contraseña debe tener minimo 8 caracteres';
                 },
-              ),               
-              
+              ),
             ),
             const SizedBox(height: 20),
-             Padding(
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: TextFormField(
                 autocorrect: false,
                 obscureText: true,
                 keyboardType: TextInputType.text,
                 decoration: InputDecorations.authInputDecoration(
-                    hintText: 'Repita su contraseña', suffixIcon: Icons.visibility_off),
+                    hintText: 'Repita su contraseña',
+                    suffixIcon: Icons.visibility_off),
                 onChanged: (value) => loginForm.repeatPasword = value,
                 validator: (value) {
                   return (value != null && value == loginForm.password)
@@ -122,46 +122,71 @@ class _LoginFormState extends State<_LoginForm> {
                       : 'Las contraseñas no son iguales';
                 },
               ),
-              
             ),
             const SizedBox(height: 20),
-           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Aceptar terminos y condiciones',
-                style:
-                    TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-              ),
-              Switch(
-                  value: acepted,
-                  onChanged: (bool value) {
-                    setState(() {
-                      acepted = value;
-                    });
-                  })
-            ],
-          ),               
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  'Aceptar terminos y condiciones',
+                  style:
+                      TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                ),
+                Switch(
+                    value: acepted,
+                    onChanged: (bool value) {
+                      setState(() {
+                        acepted = value;
+                      });
+                    })
+              ],
+            ),
             const SizedBox(
               height: 20,
             ),
             ElevatedButton(
-              child: const SizedBox(
+              onPressed: loginForm.isLoading
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
+                      //Oculta el teclado al hacer onpress
+                      final authService =
+                          Provider.of<AuthService>(context, listen: false);
+
+                      if (!loginForm.isValidForm()) return;
+                      
+                      loginForm.isLoading = true;
+
+                      final String? errorMessage = await authService.createUser(
+                          loginForm.email, loginForm.password);
+                      if (errorMessage == null) {
+                        if (!context.mounted) return;
+                        context.go('/home');
+                      } else {
+                        
+                        loginForm.isLoading = false;
+                      }                    
+                     
+                    },
+              child: SizedBox(
                 width: 300,
                 child: Center(
-                  child: Text('Registrarme',
-                      style: TextStyle(
+                  child: Text(
+                      loginForm.isLoading ? 'Espere....' : 'Registrarme',
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
               ),
-              onPressed: () {
-                if (!loginForm.isValidForm()) return;
-                context.go('/home');
-              },
-            ),            
-             const SizedBox(height: 20),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
-                onPressed: () {},
+                onPressed:() async {
+                  final authService =
+                      Provider.of<AuthService>(context, listen: false);
+                  authService.signInWithGoogle();
+                  if (!context.mounted) return;
+                        context.go('/home');
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                 ),
@@ -181,14 +206,12 @@ class _LoginFormState extends State<_LoginForm> {
                         'Iniciar sesión con Google',
                         style: TextStyle(color: Colors.white),
                       ),
-    
                     ],
                   ),
-                )
-                ),
+                )),
             const SizedBox(height: 20),
             ElevatedButton(
-                onPressed: () {},
+                onPressed: (){},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                 ),
@@ -215,6 +238,3 @@ class _LoginFormState extends State<_LoginForm> {
         ));
   }
 }
-
-
-

@@ -7,7 +7,18 @@ class LoginFormProvider extends ChangeNotifier {
   String password = '';
   String repeatPasword = '';
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
   bool isValidForm() {
+    
     return formkey.currentState?.validate() ?? false;
+
+    
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:kafe_app/providers/login_form_provider.dart';
+import 'package:kafe_app/services/auth_service.dart';
+import 'package:kafe_app/services/notifications_service.dart';
 import 'package:kafe_app/ui/input_decorations.dart';
 import 'package:provider/provider.dart';
 
@@ -102,25 +104,44 @@ class _LoginForm extends StatelessWidget {
             ),
             const Text(
               '¿ Olvido su contraseña ?',
-              style:
-                  TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
               height: 20,
             ),
             ElevatedButton(
-              child: const SizedBox(
+              onPressed: loginForm.isLoading
+                  ? null
+                  : () async {
+                      FocusScope.of(context).unfocus();
+                      //Oculta el teclado al hacer onpress
+                      final authService =
+                          Provider.of<AuthService>(context, listen: false);
+
+                      if (!loginForm.isValidForm()) return;
+
+                      loginForm.isLoading = true;
+
+                      final String? errorMessage = await authService.login(
+                          loginForm.email, loginForm.password);
+                      if (errorMessage == null) {
+                        if (!context.mounted) return;
+                        context.go('/home');
+                      } else {
+                        NotificationService.showSnackbar(
+                            'Correo o contraseña no vadido');
+                        loginForm.isLoading = false;
+                      }
+                    },
+              child: SizedBox(
                 width: 300,
                 child: Center(
-                  child: Text('Iniciar Sesión',
-                      style: TextStyle(
+                  child: Text(
+                      loginForm.isLoading ? 'Espere....' : 'Iniciar Sesión',
+                      style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 18)),
                 ),
               ),
-              onPressed: () {
-                if (!loginForm.isValidForm()) return;
-                context.go('/home');
-              },
             ),
             const SizedBox(
               height: 10,
@@ -139,9 +160,15 @@ class _LoginForm extends StatelessWidget {
                 ),
               ],
             ),
-             const SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
-                onPressed: () {},
+                onPressed: () async {
+                  final authService =
+                      Provider.of<AuthService>(context, listen: false);
+                  authService.signInWithGoogle();
+                   if (!context.mounted) return;
+                        context.go('/home');
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                 ),
@@ -161,11 +188,9 @@ class _LoginForm extends StatelessWidget {
                         'Iniciar sesión con Google',
                         style: TextStyle(color: Colors.white),
                       ),
-    
                     ],
                   ),
-                )
-                ),
+                )),
             const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {},

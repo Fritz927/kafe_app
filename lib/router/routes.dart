@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:kafe_app/presentation/screens/home_screen.dart';
+import 'package:kafe_app/presentation/screens/login/check_auth_screen.dart';
 import 'package:kafe_app/presentation/screens/login/initial_screen.dart';
 import 'package:kafe_app/presentation/screens/login/login_screen.dart';
 import 'package:kafe_app/presentation/screens/login/register_screen.dart';
@@ -7,10 +8,15 @@ import 'package:kafe_app/presentation/screens/login/register_screen.dart';
 
   final router = GoRouter(
   initialLocation: '/',
-  routes: [   
+  routes: [  
+     GoRoute(
+      name: 'checking', // Optional, add name to your routes. Allows you navigate by name instead of path
+      path: '/',
+      builder: (context, state) => const CheckAuthScreen(),
+    ), 
     GoRoute(
       name: 'initial', // Optional, add name to your routes. Allows you navigate by name instead of path
-      path: '/',
+      path: '/initial',
       builder: (context, state) =>const InitialScreen(),
     ),
      GoRoute(

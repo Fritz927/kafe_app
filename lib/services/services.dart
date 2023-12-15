@@ -1,0 +1,1 @@
+export 'package:kafe_app/services/auth_service.dart';
